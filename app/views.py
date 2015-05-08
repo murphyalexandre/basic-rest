@@ -1,8 +1,5 @@
-from flask import abort, Blueprint, flash, jsonify, request
-from jinja2 import TemplateNotFound
-
-from app import  db
-
+from flask import abort, Blueprint, jsonify, request
+from app import db
 from .models import Car
 
 basic_rest = Blueprint(
@@ -32,13 +29,13 @@ def new_car():
 
         # Insert new car
         new_car = Car(
-            description=request.json['description'],
-            cylinders=request.json['cylinders'],
-            make=request.json['make'],
-            model=request.json['model'],
-            year=request.json['year'],
-            owner=request.json['owner'],
-            image=request.json['image']
+            description=data['description'],
+            cylinders=data['cylinders'],
+            make=data['make'],
+            model=data['model'],
+            year=data['year'],
+            owner=data['owner'],
+            image=data['image']
         )
         db.session.add(new_car)
         db.session.commit()
@@ -58,8 +55,10 @@ def update_car(id):
         found = Car.query.get_or_404(id)
 
         # Partial updates with ternary operator
-        found.description = data['description'] if 'description' in data else found.description
-        found.cylinders = data['cylinders'] if 'cylinders' in data else found.cylinders
+        found.description = data['description'] \
+            if 'description' in data else found.description
+        found.cylinders = data['cylinders'] \
+            if 'cylinders' in data else found.cylinders
         found.make = data['make'] if 'make' in data else found.make
         found.model = data['model'] if 'model' in data else found.model
         found.year = data['year'] if 'year' in data else found.year
